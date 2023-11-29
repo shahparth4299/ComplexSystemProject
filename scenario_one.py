@@ -8,7 +8,7 @@ display_info = pygame.display.Info()
 WIDTH = display_info.current_w
 HEIGHT = display_info.current_h
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-heading_font_style = pygame.font.SysFont('Comic Sans MS', 45)
+heading_font_style = pygame.font.SysFont("Comic Sans MS", 45)
 message_loop = True
 
 BACKGROUND_COLOR = (255, 255, 255)
@@ -22,7 +22,7 @@ car4_timer = 400
 car5_timer = 650
 car6_timer = 600
 CAR_SPEED = 0.5
-CAR_SPEED2 = 0.7  
+CAR_SPEED2 = 0.7
 CAR_SPEED3 = 1.0
 CAR_SPEED4 = 0.9
 CAR3_SPEED = 1.1
@@ -33,7 +33,9 @@ pygame.display.set_caption("Vehicle To Vehicle Communication")
 
 while message_loop:
     message = heading_font_style.render(
-        "Scenario 1: Communicate to peer vehicles in case of Accident Detection", True, (255, 255, 255)
+        "Scenario 1: Communicate to peer vehicles in case of Accident Detection",
+        True,
+        (255, 255, 255),
     )
     message_rect = message.get_rect(center=(WIDTH / 2, HEIGHT / 2))
     screen.fill((0, 0, 0))
@@ -62,7 +64,7 @@ accident_occurred = False
 
 car4_switch = False
 car5_switch = False
-
+flag = True
 running = True
 while running:
     for event in pygame.event.get():
@@ -71,20 +73,31 @@ while running:
             pygame.quit()
             sys.exit()
 
-    if (accident_occurred == False):
+    if accident_occurred == False:
         car1_y -= CAR_SPEED2
         car2_y -= CAR_SPEED3
-    
-    if (car1_y < 400 and accident_occurred == False):
+
+    if car1_y < 400 and accident_occurred == False:
+        if flag:
+            pygame.mixer.music.load(
+                "accident_sound.mp3"
+            )  # Replace 'background_music.mp3' with your audio file
+
+            # Play the background music (-1 to loop indefinitely)
+            pygame.mixer.music.play(-1)
+            flag = False
         car2_x -= CAR_SPEED3
+        # Load the background music
 
     if car4_timer > 0:
         car4_timer -= 1
     else:
-        if (car4_y <= car1_x + 375 or car4_y <= car2_x + 375) and car4_x < (WIDTH - CAR_WIDTH) // 6.8 + 10:
-            if (car4_switch == False):
+        if (car4_y <= car1_x + 375 or car4_y <= car2_x + 375) and car4_x < (
+            WIDTH - CAR_WIDTH
+        ) // 6.8 + 10:
+            if car4_switch == False:
                 message = font.render(
-                    f"Yellow car switching to lane 2.",
+                    f"Yellow Car: Accident Detected in lane 4. Switching to lane 3",
                     True,
                     (0, 0, 0),
                 )
@@ -96,10 +109,12 @@ while running:
     if car5_timer > 0:
         car5_timer -= 1
     else:
-        if (car5_y <= car1_x + 600 or car5_y <= car2_x + 600) and car5_x < (WIDTH - CAR_WIDTH) // 6.8 + 10:
-            if (car5_switch == False):
+        if (car5_y <= car1_x + 600 or car5_y <= car2_x + 600) and car5_x < (
+            WIDTH - CAR_WIDTH
+        ) // 6.8 + 10:
+            if car5_switch == False:
                 message = font.render(
-                    f"Red car switching to lane 2.",
+                    f"Red Car: Acknowledged. Switching to lane 2.",
                     True,
                     (0, 0, 0),
                 )
@@ -108,23 +123,30 @@ while running:
             pygame.display.flip()
             car5_x += CAR_SPEED
         car5_y -= CAR_SPEED
-    
+
     if car6_timer > 0:
         car6_timer -= 1
     else:
         car6_y -= CAR6_SPEED
 
     car3_y -= CAR3_SPEED
-    if accident_occurred == False and car1_x < car2_x + CAR_WIDTH and car1_x + CAR_WIDTH > car2_x and car1_y < car2_y + CAR_HEIGHT and car1_y + CAR_HEIGHT > car2_y:
+    if (
+        accident_occurred == False
+        and car1_x < car2_x + CAR_WIDTH
+        and car1_x + CAR_WIDTH > car2_x
+        and car1_y < car2_y + CAR_HEIGHT
+        and car1_y + CAR_HEIGHT > car2_y
+    ):
         accident_occurred = True
         message = font.render(
             f"Accident Detected by yellow car on lane 1.",
             True,
             (0, 0, 0),
         )
+
         screen.blit(message, (WIDTH // 1.8, 10))
         pygame.display.flip()
-        time.sleep (1)
+        time.sleep(1)
         message = font.render(
             f"Car Yellow informs other cars on lane 1 about accident.",
             True,
@@ -132,7 +154,7 @@ while running:
         )
         screen.blit(message, (WIDTH // 1.8, 40))
         pygame.display.flip()
-        time.sleep (1)
+        time.sleep(1)
     else:
         screen.fill(BACKGROUND_COLOR)
 
@@ -140,7 +162,7 @@ while running:
             for j in range(0, HEIGHT, 10):
                 pygame.draw.rect(screen, LANE_COLOR, (i * LANE_WIDTH, j, 2, 5))
 
-        car4 = pygame.image.load("car04.png") 
+        car4 = pygame.image.load("car04.png")
         car4 = pygame.transform.scale(car4, (CAR_WIDTH * 2, CAR_HEIGHT * 2))
         screen.blit(car4, (car4_x, car4_y))
 

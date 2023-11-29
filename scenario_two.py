@@ -5,6 +5,7 @@ import time
 
 import random
 import math
+
 # Initialize Pygame
 pygame.init()
 display_info = pygame.display.Info()
@@ -58,7 +59,7 @@ final_position = car_x + LANE_WIDTH
 message_loop = True
 
 TRACK = pygame.image.load("road.png")
-TRACK = pygame.transform.scale(TRACK, (WIDTH,HEIGHT))
+TRACK = pygame.transform.scale(TRACK, (WIDTH, HEIGHT))
 
 # Load obstacle image
 obstacle_image = pygame.image.load("obstacle.png")
@@ -77,12 +78,21 @@ obstacle_rect.center = (300, 200)
 
 # Blit obstacle onto surface
 
+pygame.mixer.init()
+
+# Load the background music
+pygame.mixer.music.load(
+    "rain_sound.mp3"
+)  # Replace 'background_music.mp3' with your audio file
+
+# Play the background music (-1 to loop indefinitely)
+pygame.mixer.music.play(-1)
 
 
 class Car(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.original_image = pygame.image.load(os.path.join("Assets", "car2.png"))
+        self.original_image = pygame.image.load(os.path.join("Assets", "car.png"))
         self.image = self.original_image
         self.rect = self.image.get_rect(center=(490, 820))
         self.vel_vector = pygame.math.Vector2(0.8, 0)
@@ -106,14 +116,19 @@ class Car(pygame.sprite.Sprite):
 
     def collision(self):
         length = 40
-        collision_point_right = [int(self.rect.center[0] + math.cos(math.radians(self.angle + 18)) * length),
-                                 int(self.rect.center[1] - math.sin(math.radians(self.angle + 18)) * length)]
-        collision_point_left = [int(self.rect.center[0] + math.cos(math.radians(self.angle - 18)) * length),
-                                int(self.rect.center[1] - math.sin(math.radians(self.angle - 18)) * length)]
+        collision_point_right = [
+            int(self.rect.center[0] + math.cos(math.radians(self.angle + 18)) * length),
+            int(self.rect.center[1] - math.sin(math.radians(self.angle + 18)) * length),
+        ]
+        collision_point_left = [
+            int(self.rect.center[0] + math.cos(math.radians(self.angle - 18)) * length),
+            int(self.rect.center[1] - math.sin(math.radians(self.angle - 18)) * length),
+        ]
 
         # Die on Collision
-        if screen.get_at(collision_point_right) == pygame.Color(2, 105, 31, 255) \
-                or screen.get_at(collision_point_left) == pygame.Color(2, 105, 31, 255):
+        if screen.get_at(collision_point_right) == pygame.Color(
+            2, 105, 31, 255
+        ) or screen.get_at(collision_point_left) == pygame.Color(2, 105, 31, 255):
             self.alive = False
 
         # Draw Collision Points
@@ -136,17 +151,29 @@ class Car(pygame.sprite.Sprite):
         x = int(self.rect.center[0])
         y = int(self.rect.center[1])
 
-        while not screen.get_at((x, y)) == pygame.Color(2, 105, 31, 255) and length < 200:
+        while (
+            not screen.get_at((x, y)) == pygame.Color(2, 105, 31, 255) and length < 200
+        ):
             length += 1
-            x = int(self.rect.center[0] + math.cos(math.radians(self.angle + radar_angle)) * length)
-            y = int(self.rect.center[1] - math.sin(math.radians(self.angle + radar_angle)) * length)
+            x = int(
+                self.rect.center[0]
+                + math.cos(math.radians(self.angle + radar_angle)) * length
+            )
+            y = int(
+                self.rect.center[1]
+                - math.sin(math.radians(self.angle + radar_angle)) * length
+            )
 
         # Draw Radar
         pygame.draw.line(screen, (255, 255, 255, 255), self.rect.center, (x, y), 1)
         pygame.draw.circle(screen, (0, 255, 0, 0), (x, y), 3)
 
-        dist = int(math.sqrt(math.pow(self.rect.center[0] - x, 2)
-                             + math.pow(self.rect.center[1] - y, 2)))
+        dist = int(
+            math.sqrt(
+                math.pow(self.rect.center[0] - x, 2)
+                + math.pow(self.rect.center[1] - y, 2)
+            )
+        )
 
         self.radars.append([radar_angle, dist])
 
@@ -164,7 +191,7 @@ while True:
             pygame.quit()
             sys.exit()
 
-      # Create new raindrops
+    # Create new raindrops
     for i in range(10):  # Adjust the number of raindrops per frame
         x = random.randint(0, WIDTH)
         y = random.randint(0, HEIGHT)
@@ -179,18 +206,20 @@ while True:
         # Remove raindrops when they go below the screen
         if y > HEIGHT:
             raindrops[i] = (random.randint(0, WIDTH), random.randint(-HEIGHT, 0))
-    
+
     # Draw the raindrops
     for x, y in raindrops:
-        pygame.draw.line(screen, RAIN_COLOR, (x, y), (x, y + 2), 1)  # Adjust the line length and thickness
-    
-     # Update the display
+        pygame.draw.line(
+            screen, RAIN_COLOR, (x, y), (x, y + 2), 1
+        )  # Adjust the line length and thickness
+
+    # Update the display
     pygame.display.flip()
 
     # Control the frame rate
     clock.tick(60)
     # Move the car
-    
+
     car_y -= car_speed
 
     car2_y -= 1
@@ -232,7 +261,7 @@ while True:
             # car_x += LANE_WIDTH
             # car_y -= LANE_WIDTH
 
-            car_x += 2*car_speed
+            car_x += 2 * car_speed
             car_y -= car_speed
             print("Car X = " + str(car_x) + " Car Y = " + str(car_y))
             if car_x >= final_position:
@@ -242,9 +271,9 @@ while True:
 
     screen.fill(WHITE)
     pygame.draw.line(screen, DIVIDER_COLOR, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 2)
-    #combined_surface.blit(obstacle_image, obstacle_rect)
+    # combined_surface.blit(obstacle_image, obstacle_rect)
 
-    #screen.blit(combined_surface, (0, 0))
+    # screen.blit(combined_surface, (0, 0))
     # Draw lanes
     # pygame.draw.line(screen, BLACK, (LANE_WIDTH, 0), (LANE_WIDTH, HEIGHT), 5)
     # pygame.draw.line(
@@ -254,19 +283,16 @@ while True:
         for j in range(0, HEIGHT, 10):
             pygame.draw.rect(screen, BLACK, (i * LANE_WIDTH, j, 2, 5))
 
-    
     # Draw the ambulance
     pothole = pygame.image.load("obstacle.png")
-    pothole = pygame.transform.scale(
-        pothole, (POTHOLE_WIDTH * 3, POTHOLE_HEIGHT * 3)
-    )
+    pothole = pygame.transform.scale(pothole, (POTHOLE_WIDTH * 3, POTHOLE_HEIGHT * 3))
     screen.blit(pothole, (pothole_x, pothole_y))
 
     # Draw the car
     car1 = pygame.sprite.GroupSingle(Car())
     car1 = pygame.image.load("car01.png")
     car1 = pygame.transform.scale(car1, (CAR_WIDTH * 2, CAR_HEIGHT * 2))
-    
+
     screen.blit(car1, (car_x, car_y))
 
     car2 = pygame.image.load("car04.png")
@@ -278,6 +304,6 @@ while True:
     screen.blit(car3, (car3_x, car3_y))
     # Update the display
     pygame.display.flip()
-    
+
     # Control the frame rate
     clock.tick(60)

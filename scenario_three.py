@@ -51,6 +51,15 @@ car_lane = 0  # 0 for left lane, 1 for right lane
 DIVIDER_COLOR = BLACK
 final_position = car_x + LANE_WIDTH
 message_loop = True
+
+# Load the background music
+pygame.mixer.music.load(
+    "ambulance_sound.mp3"
+)  # Replace 'background_music.mp3' with your audio file
+
+# Play the background music (-1 to loop indefinitely)
+pygame.mixer.music.play(-1)
+
 # Main game loop
 while True:
     for event in pygame.event.get():
