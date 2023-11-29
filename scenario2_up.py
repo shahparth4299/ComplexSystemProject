@@ -172,7 +172,7 @@ def running_car():
 
 
      #We can continuously checking collision flag
-        if(car1.sprite.collision_flag == True and car1.sprite.lane_distance > 10):
+        if(car1.sprite.collision_flag == True and car1.sprite.lane_distance > 0):
             if(car1.sprite.message_loop == True): 
                 print("Message flag true")
                 message = font.render(
