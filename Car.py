@@ -12,11 +12,12 @@ class Car(pygame.sprite.Sprite):
     lane_distance = LANE_WIDTH
     speed_reduce = False
     bad_weather_flag = False
-    def __init__(self,number,car_image,initial_position, car_speed, reduced_speed, direction_vector=(0,-1)):
+    accident_occured = False
+    def __init__(self,number,car_image,initial_position, car_speed, reduced_speed, car_width,car_height,direction_vector=(0,-1)):
         super().__init__()
         self.original_image = pygame.image.load(os.path.join("Assets",car_image))
         print(self.original_image.get_width(),self.original_image.get_height())
-        self.original_image = pygame.transform.smoothscale(self.original_image, (CAR_WIDTH,CAR_HEIGHT))
+        self.original_image = pygame.transform.smoothscale(self.original_image, (car_width,car_height))
         print("Initial_car_position:", self.original_image.get_width(),self.original_image.get_height())
         self.image = self.original_image
         print("Scaled_car_position:", self.image.get_width(),self.image.get_height())
@@ -30,12 +31,16 @@ class Car(pygame.sprite.Sprite):
         self.speed = car_speed
         self.reduced_speed = reduced_speed
         self.car_number = number
+        self.accident_happen = False
 
     def update(self):
-        self.drive_car()
+        if (self.accident_happen == False):
+            self.drive_car()
+
         self.rotate_car()
         self.radar(90)
         self.collision()
+        self.collision_car()
         self.weather_sensor()
 
     #Currently speed is constant in y-axis only
@@ -44,7 +49,7 @@ class Car(pygame.sprite.Sprite):
             self.rect.centery += int(self.vel_vector[1] * self.reduced_speed)
         else:
             self.rect.centery += int(self.vel_vector[1] * self.speed)
-          
+        
     def rotate_car(self):
         if self.direction == 1:
             self.angle -= self.rotational_vel
@@ -68,12 +73,12 @@ class Car(pygame.sprite.Sprite):
                 x = int(self.rect.center[0] + math.cos(math.radians(self.angle + radar_angle)) * length)
                 y = int(self.rect.center[1] - math.sin(math.radians(self.angle + radar_angle)) * length)
         except IndexError:
-            print("Index out of range for pixel", x,y)
+                pass
            # sys.exit(1)
 
         # Draw Radar
-        pygame.draw.line(SCREEN, (0, 0, 0, 0), self.rect.center, (x, y), 1)
-        pygame.draw.circle(SCREEN, (0, 0, 0, 0), (x, y), 1)
+        #pygame.draw.line(SCREEN, (0, 0, 0, 0), self.rect.center, (x, y), 1)
+        #pygame.draw.circle(SCREEN, (0, 0, 0, 0), (x, y), 1)
 
 
     def collision(self):
@@ -91,7 +96,10 @@ class Car(pygame.sprite.Sprite):
         else:
             self.collision_flag = False
      #   try:
-        if(collision_point_right[0] < 1) or (collision_point_left[0] < 1) or (collision_point_right[1] < 1) or (collision_point_left[1] < 1):
+        if((collision_point_right[0] < 1) or (collision_point_left[0] < 1) 
+           or (collision_point_right[1] < 1) or (collision_point_left[1] < 1)
+           or collision_point_right[0] > WIDTH or  collision_point_right[1] > HEIGHT
+            or collision_point_left[0] > WIDTH or  collision_point_left[1] > HEIGHT):
             collision_point_left[0] = 2
             collision_point_right[0] = 2
             collision_point_left[1] = 2
@@ -106,8 +114,51 @@ class Car(pygame.sprite.Sprite):
 
             #print("Index out of range for pixel", collision_point_left, collision_point_right)
         # Draw Collision Points
-        pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_right, 4)
-        pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_left, 4)
+      #  pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_right, 4)
+       # pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_left, 4)
+
+
+    def collision_car(self):
+        length = 40
+        collision_point_right = [int(self.rect.center[0] + math.cos(math.radians(self.angle + 108)) * length),
+                int(self.rect.center[1] - math.sin(math.radians(self.angle + 108)) * length) - (length * 2)]
+        collision_point_left= [int(self.rect.center[0] + math.cos(math.radians(self.angle + 68)) * length) 
+                                   ,int(self.rect.center[1] - math.sin(math.radians(self.angle + 68)) * length) - (length * 2)]
+        # Die on Collision
+
+        if (self.collision_flag == True):
+            self.collision_flag = True
+            self.message_loop = False
+            length -=2
+        else:
+            self.collision_flag = False
+        try:
+            if((collision_point_right[0] < 1) or (collision_point_left[0] < 1) 
+            or (collision_point_right[1] < 1) or (collision_point_left[1] < 1)
+            or collision_point_right[0] > WIDTH or  collision_point_right[1] > HEIGHT
+                or collision_point_left[0] > WIDTH or  collision_point_left[1] > HEIGHT):
+                collision_point_left[0] = 2
+                collision_point_right[0] = 2
+                collision_point_left[1] = 2
+                collision_point_right[1] = 2
+                #  self.collision_flag = True
+            # Access pixels within the valid range
+            if ((Car.accident_occured == True) and (SCREEN.get_at(collision_point_right) == pygame.Color(CAR_COLOR) \
+                or SCREEN.get_at(collision_point_left) == pygame.Color(CAR_COLOR))):
+                self.alive = False
+                self.collision_flag = True
+                message = font.render(
+                f"Accident Detected by Car 4 on lane 1. Switch Lane",
+                True,
+                BLACK,
+                )
+                SCREEN.blit(message, (WIDTH // 1.3, 40))
+        except IndexError:
+            pass
+            #print("Index out of range for pixel", collision_point_left, collision_point_right)
+        # Draw Collision Points
+        #pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_right, 4)
+        #pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_left, 4)
 
     def collision_resolver(self):
         distanced_moved = 200
@@ -115,10 +166,9 @@ class Car(pygame.sprite.Sprite):
         if(self.collision_flag == True):
             if(self.message_loop == True): 
                 message = font.render(f"Detected object switch lane", True, (255, 255, 255))
-                SCREEN.blit(message, (WIDTH // 1.8, 40))
+                SCREEN.blit(message, (WIDTH // 1.3, 40))
                 time.sleep(3) 
             while(distanced_moved > 30):
-                print("Distanced moved", self.rect.x, self.rect.y, 200 - distanced_moved)
                 self.rect.x += self.reduced_speed
                 self.rect.y += self.reduced_speed
 
@@ -137,19 +187,22 @@ class Car(pygame.sprite.Sprite):
                 int(self.rect.center[1] - math.sin(math.radians(self.angle + 108)) * length) - (length)]
         collision_point_left= [int(self.rect.center[0] + math.cos(math.radians(self.angle + 68)) * length) 
                                    ,int(self.rect.center[1] - math.sin(math.radians(self.angle + 68)) * length) - (length)]
-     #   try:
-        if(collision_point_right[0] < 1) or (collision_point_left[0] < 1) or (collision_point_right[1] < 1) or (collision_point_left[1] < 1):
-            collision_point_left[0] = 2
-            collision_point_right[0] = 2
-            collision_point_left[1] = 2
-            collision_point_right[1] = 2
-              #  self.collision_flag = True
-        # Access pixels within the valid range
-        if SCREEN.get_at(collision_point_right) == pygame.Color(RAIN_COLOR) \
-            or SCREEN.get_at(collision_point_left) == pygame.Color(RAIN_COLOR):
-            Car.bad_weather_flag = True
-    #    except IndexError:
-
+        try:
+            if((collision_point_right[0] < 1) or (collision_point_left[0] < 1) 
+                or (collision_point_right[1] < 1) or (collision_point_left[1] < 1)
+                or collision_point_right[0] > WIDTH or  collision_point_right[1] > HEIGHT
+                    or collision_point_left[0] > WIDTH or  collision_point_left[1] > HEIGHT):
+                    collision_point_left[0] = 2
+                    collision_point_right[0] = 2
+                    collision_point_left[1] = 2
+                    collision_point_right[1] = 2
+                   # print(collision_point_left[0],collision_point_left[1],collision_point_right[0],collision_point_right[1])
+            # Access pixels within the valid range
+            if SCREEN.get_at(collision_point_right) == pygame.Color(RAIN_COLOR) \
+                or SCREEN.get_at(collision_point_left) == pygame.Color(RAIN_COLOR):
+                Car.bad_weather_flag = True
+        except IndexError:
+            pass
             #print("Index out of range for pixel", collision_point_left, collision_point_right)
         # Draw Collision Points
         pygame.draw.circle(SCREEN, (255, 255, 255, 0), collision_point_right, 4)
