@@ -29,7 +29,7 @@ def scenario_one():
 
    
         if accident_occurred == False:
-            if car1.sprite.rect.y < 400 and Car.accident_occured == False:
+            if car1.sprite.rect.y < 500 and Car.accident_occured == False:
                 if flag:
                     pygame.mixer.music.load(
                         "accident_sound.mp3"
@@ -50,16 +50,28 @@ def scenario_one():
             car2.sprite.accident_happen = True
             car4.sprite.collision_flag = True
             message = font.render(
-                f"Accident Detected by yellow car on lane 1.",
+                f"Accident Detected by Car 4 on lane 1.",
                 True,
                 BLACK,
             )
-            SCREEN.blit(message, (WIDTH // 1.8, 10))
-            time.sleep(1)
+            SCREEN.blit(message, (WIDTH // 1.3, 40))
+            
         if(car4.sprite.collision_flag == True and car4.sprite.lane_distance > 0):
             #if(car4.sprite.message_loop == True): 
-            
-#            base1.broadcast_message(1)
+            message = font.render(
+            f"Car 4 informs base station about accident.",
+            True,
+            (0, 0, 0),
+            )
+            SCREEN.blit(message, (WIDTH // 1.3, 60))
+            car1.draw(SCREEN)
+        
+            car2.draw(SCREEN)
+      
+            car3.draw(SCREEN)
+      
+            car4.draw(SCREEN)
+            base1.broadcast_message(1)
             car4.sprite.rect.x += car4.sprite.reduced_speed
             car4.sprite.rect.y += car4.sprite.reduced_speed
             car4.sprite.lane_distance -= car4.sprite.reduced_speed
