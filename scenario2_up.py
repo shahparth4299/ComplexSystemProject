@@ -6,8 +6,11 @@ import time
 import random
 from Car import Car
 from Global_System import *
+RAIN_WIDTH = 880
 # Raindrops list
 raindrops = []
+TRACK = pygame.image.load((os.path.join("Assets","newroad_Screen.png")))
+
 def scenario_two():
     # Load the background music
     pygame.mixer.music.load(
@@ -25,7 +28,7 @@ def scenario_two():
         SCREEN.blit(TRACK, (0, 0))
         # Create new raindrops
         for i in range(40):  # Adjust the number of raindrops per frame
-            x = random.randint(0, WIDTH)
+            x = random.randint(0, RAIN_WIDTH)
             y = random.randint(0, HEIGHT)
             raindrops.append((x, y))
 
@@ -37,7 +40,7 @@ def scenario_two():
 
             # Remove raindrops when they go below the screen
             if y > HEIGHT:
-                raindrops[i] = (random.randint(0, WIDTH), random.randint(-HEIGHT, 0))
+                raindrops[i] = (random.randint(0,RAIN_WIDTH), random.randint(-HEIGHT, 0))
 
         # Draw the raindrops
         for x, y in raindrops:
@@ -58,25 +61,31 @@ def scenario_two():
             message = font.render(
                     f"Bad weather detected",
                     True,
-                    (255, 255, 255),
+                    BLACK,
                     )
-            SCREEN.blit(message, (WIDTH // 1.8, 40))
+            SCREEN.blit(message, (WIDTH // 1.3, 40))
             car1.draw(SCREEN)
             car2.draw(SCREEN)
             car3.draw(SCREEN)
-            pygame.display.update()
             base1.broadcast_message(2)
             if(base1.reduced_all_cars == True):
                 Car.speed_reduce = True
+                message = font.render(
+                    f"All Car reduced Speed",
+                    True,
+                    BLACK,
+                    )
+                SCREEN.blit(message, (WIDTH // 1.3, 110))
+                pygame.display.update()
 
         if(car1.sprite.collision_flag == True and car1.sprite.lane_distance > 0):
             if(car1.sprite.message_loop == True): 
                 message = font.render(
                     f"Detected object switched lane",
                     True,
-                    (255, 255, 255),
+                    BLACK,
                     )
-                SCREEN.blit(message, (WIDTH // 1.8, 40))
+                SCREEN.blit(message, (WIDTH // 1.3, 130))
                 car1.draw(SCREEN)
                 car2.draw(SCREEN)
                 car3.draw(SCREEN)
@@ -105,8 +114,8 @@ def scenario_two():
 
         pygame.display.update()
 
-car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(250,600),2,1))
-car2 = pygame.sprite.GroupSingle(Car(2,"car.png",(750,600),2,1))
-car3 = pygame.sprite.GroupSingle(Car(3,"car.png",(1050,600),2,1))
+car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(150,600),2,1,CAR_WIDTH,CAR_HEIGHT))
+car2 = pygame.sprite.GroupSingle(Car(2,"car.png",(350,700),2,1,CAR_WIDTH,CAR_HEIGHT))
+car3 = pygame.sprite.GroupSingle(Car(3,"car.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
 base1 = Base_station()
 scenario_two()
