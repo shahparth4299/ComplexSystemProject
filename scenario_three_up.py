@@ -68,7 +68,7 @@ def running_car_scenario3():
 
 car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(110,600),1,1,CAR_WIDTH,CAR_HEIGHT))
 ambulance = pygame.sprite.GroupSingle(Car(2,"ambulance.png",(110,800),2,1,AMBULANCE_WIDTH, AMBULANCE_HEIGHT))
-car3 = pygame.sprite.GroupSingle(Car(3,"car.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
+car3 = pygame.sprite.GroupSingle(Car(3,"car3.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
 base1 = Base_station()
 running_car_scenario3()
 

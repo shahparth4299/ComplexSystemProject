@@ -111,7 +111,7 @@ def scenario_two():
         pygame.display.update()
 
 car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(150,600),2,1,CAR_WIDTH,CAR_HEIGHT))
-car2 = pygame.sprite.GroupSingle(Car(2,"car.png",(770,700),2,1,CAR_WIDTH,CAR_HEIGHT))
-car3 = pygame.sprite.GroupSingle(Car(3,"car.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
+car2 = pygame.sprite.GroupSingle(Car(2,"car3.png",(770,700),2,1,CAR_WIDTH,CAR_HEIGHT))
+car3 = pygame.sprite.GroupSingle(Car(3,"car4.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
 base1 = Base_station()
 scenario_two()
