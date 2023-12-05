@@ -68,11 +68,11 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             if button1_rect.collidepoint(mouse_pos):
-                button_action("scenario1.py")
+                button_action("scenario_one_up.py")
             elif button2_rect.collidepoint(mouse_pos):
-                button_action("scenario12.py")
+                button_action("scenario_two_up.py")
             elif button3_rect.collidepoint(mouse_pos):
-                button_action("scenario3.py")
+                button_action("scenario_three_up.py")
 
     screen.fill((255, 255, 255))
     draw_button(button1_rect, button1_text, button_color, hover_color, font)

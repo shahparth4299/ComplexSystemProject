@@ -10,13 +10,16 @@ pygame.init()
 display_info = pygame.display.Info()
 WIDTH = 1200
 HEIGHT = 720
-FPS = 30
+FPS = 60
 LANE_WIDTH = 220 #Lane Width
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 POTHOLE = (0, 164,235,255)
 CAR_COLOR = (37, 150, 190)
 RAIN_COLOR = (135, 206, 235)  # Light blue color for raindrops
+MAX_RADAR_LENGTH = 200
+MIN_RADAR_LENGTH = 40
 import textwrap
 
 

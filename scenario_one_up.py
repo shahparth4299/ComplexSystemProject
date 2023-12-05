@@ -11,12 +11,8 @@ car5 = None
 def scenario_one():
 
     clock = pygame.time.Clock()
-
-    message_loop = True
     accident_occurred = False
 
-    car4_switch = False
-    car5_switch = False
     flag = True
     running = True
     while running:
@@ -89,68 +85,13 @@ def scenario_one():
         car3.update()
         car4.draw(SCREEN)
         car4.update()
- #           car5.draw(SCREEN)
-  #          car5.update()
         pygame.display.update()
-
-
-"""
-        if (Car.accident_occured == False
-            and car1.sprite.rect.x < car2.sprite.rect.x + CAR_WIDTH
-            and car1.sprite.rect.x + CAR_WIDTH > car2.sprite.rect.x
-            and car1.sprite.rect.y < car2.sprite.rect.y + CAR_HEIGHT
-            and car1.sprite.rect.y + CAR_HEIGHT > car2.sprite.rect.y
-        ):
-    
-        if (car4 != None):
-            if ((car4.sprite.rect.y <= car1.sprite.rect.x + 375 or car4.sprite.rect.y <= car2.sprite.rect.x + 375) 
-                and car4.sprite.rect.x < (WIDTH - CAR_WIDTH)) // 6.8 + 10:
-                if car4_switch == False:
-                    message = font.render(
-                        f"Yellow Car: Accident Detected in lane 4. Switching to lane 3",
-                        True,
-                        (0, 0, 0),
-                    )
-                    car4_switch = True
-                screen.blit(message, (WIDTH // 1.8, 40))
-                pygame.display.flip()
-                car4.sprite.rect.x += CAR_SPEED2
-            car4.sprite.rect.y -= CAR_SPEED2
-            if ((car5.sprite.rect.y <= car1.sprite.rect.x + 600 or car5.sprite.rect.y <= car2.sprite.rect.x + 600) 
-                and car5.sprite.rect.x < (WIDTH - CAR_WIDTH)) // 6.8 + 10:
-                if car5_switch == False:
-                    message = font.render(
-                        f"Red Car: Acknowledged. Switching to lane 2.",
-                        True,
-                        (0, 0, 0),
-                    )
-                    car5_switch = True
-                screen.blit(message, (WIDTH // 1.8, 40))
-                pygame.display.flip()
-                car5.sprite.rect.x += CAR_SPEED
-            car5.sprite.rect.y -= CAR_SPEED
-
-        car3.sprite.rect.y -= CAR3_SPEED
-       
-            message = font.render(
-                f"Car Yellow informs other cars on lane 1 about accident.",
-                True,
-                (0, 0, 0),
-            )
-            screen.blit(message, (WIDTH // 1.8, 40))
-            pygame.display.flip()
-            time.sleep(1)
-        else:
-
-            pygame.display.flip()
-            clock.tick(60)
-"""
+        clock.tick(FPS)
     
 car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(150,600),1,1,CAR_WIDTH,CAR_HEIGHT))
 car2 = pygame.sprite.GroupSingle(Car(2,"car.png",(350,550),1,1,CAR_WIDTH,CAR_HEIGHT))
 car3 = pygame.sprite.GroupSingle(Car(3,"car3.png",(550,600),2,1,CAR_WIDTH,CAR_HEIGHT))
-car4 = pygame.sprite.GroupSingle(Car(4,"car4.png",(150,900),1,1,CAR_WIDTH,CAR_HEIGHT))
-#car5 = pygame.sprite.GroupSingle(Car(5,"car.png",(150,1000),1,1,CAR_WIDTH,CAR_HEIGHT))
+car4 = pygame.sprite.GroupSingle(Car(4,"car4.png",(150,800),1,1,CAR_WIDTH,CAR_HEIGHT))
 
 base1 = Base_station()
 

@@ -12,6 +12,7 @@ raindrops = []
 TRACK = pygame.image.load((os.path.join("Assets","newroad_Screen.png")))
 
 def scenario_two():
+    clock = pygame.time.Clock()
     # Load the background music
     pygame.mixer.music.load(
         "rain_sound.mp3"
@@ -48,10 +49,11 @@ def scenario_two():
                 SCREEN, RAIN_COLOR, (x, y), (x, y + 2), 1
             )  # Adjust the line length and thickness
             car_center = [car1.sprite.rect.x,car1.sprite.rect.y]
-            if SCREEN.get_at(car_center) == pygame.Color(RAIN_COLOR):
-                Car.bad_weather_flag = True
-        
-
+            try:
+                if SCREEN.get_at(car_center) == pygame.Color(RAIN_COLOR):
+                    Car.bad_weather_flag = True
+            except IndexError:
+                pass
      #We can continuously checking collision flag
         if(Car.bad_weather_flag == True):
             message = font.render(
@@ -106,9 +108,8 @@ def scenario_two():
         car2.update()
         car3.draw(SCREEN)
         car3.update()
-
-
         pygame.display.update()
+        clock.tick(FPS)
 
 car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(150,600),2,1,CAR_WIDTH,CAR_HEIGHT))
 car2 = pygame.sprite.GroupSingle(Car(2,"car3.png",(770,700),2,1,CAR_WIDTH,CAR_HEIGHT))

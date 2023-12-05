@@ -20,6 +20,7 @@ pygame.mixer.music.play(-1)
 #Create Track
 TRACK = pygame.image.load((os.path.join("Assets","newroad_Screen.png")))
 def running_car_scenario3():
+    clock = pygame.time.Clock()
     run = True
     while run:
         for event in pygame.event.get():
@@ -64,6 +65,7 @@ def running_car_scenario3():
             car1.sprite.rect.center += car1.sprite.vel_vector * car1.sprite.reduced_speed
             car1.sprite.rect.centery += int(car1.sprite.vel_vector[1] * car1.sprite.reduced_speed)
             car1.sprite.rect.centerx += int(car1.sprite.vel_vector[0] * car1.sprite.reduced_speed)
+        clock.tick(FPS)
 
 
 car1 = pygame.sprite.GroupSingle(Car(1,"car.png",(110,600),1,1,CAR_WIDTH,CAR_HEIGHT))
